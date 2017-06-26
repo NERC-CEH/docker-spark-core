@@ -2,8 +2,9 @@ FROM ubuntu:16.04
 
 LABEL maintainer "gareth.lloyd@stfc.ac.uk"
 
-# Install r-base package
-RUN apt-get update && apt-get -y install "r-base"
+# Install packages
+RUN apt-get update && \
+	apt-get -y install r-base openjdk-8-jdk
 
 # Add KnitR for R html rendering with Zeppelin
 RUN R -e "install.packages('knitr', repo='https://cloud.r-project.org/')"
