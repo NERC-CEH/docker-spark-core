@@ -32,14 +32,3 @@ RUN echo "deb http://cran.rstudio.com/bin/linux/ubuntu xenial/" | tee -a /etc/ap
     R -e "install.packages('knitr', repos='http://cran.us.r-project.org')" && \
     R -e "install.packages('ggplot2', repos='http://cran.us.r-project.org')" && \
     R -e "install.packages('magrittr', repo='https://cloud.r-project.org/')"
-
-# Install R
-# RUN apt-get update && \
-# 	apt-get -y install r-base
-
-# # Add KnitR for R html rendering with Zeppelin
-# RUN R -e "install.packages('knitr', repo='https://cloud.r-project.org/')"
-
-# # Additional packages for plots and command piping
-# RUN R -e "install.packages('ggplot2', repo='https://cloud.r-project.org/')"
-# RUN R -e "install.packages('magrittr', repo='https://cloud.r-project.org/')"
