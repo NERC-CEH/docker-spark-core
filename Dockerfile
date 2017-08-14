@@ -32,3 +32,9 @@ RUN echo "deb http://cran.rstudio.com/bin/linux/ubuntu xenial/" | tee -a /etc/ap
     R -e "install.packages('knitr', repos='http://cran.us.r-project.org')" && \
     R -e "install.packages('ggplot2', repos='http://cran.us.r-project.org')" && \
     R -e "install.packages('magrittr', repo='https://cloud.r-project.org/')"
+
+# Install Tini
+RUN wget -O /tmp/tini https://github.com/krallin/tini/releases/download/v0.15.0/tini && \
+    mv /tmp/tini /usr/bin/tini && \
+    rm -rf /tmp/tini && \
+    chmod +x /usr/bin/tini
