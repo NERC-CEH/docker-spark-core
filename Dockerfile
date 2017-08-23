@@ -24,7 +24,7 @@ RUN echo oracle-java8-installer shared/accepted-oracle-license-v1-1 select true 
     rm -rf /var/cache/oracle-jdk8-installer
 
 # Install Spark
-ENV SPARK_VER 2.1.0
+ENV SPARK_VER 2.2.0
 ENV HADOOP_VER 2.7
 ENV SPARK_HOME /opt/spark
 RUN wget -O /tmp/spark-${SPARK_VER}-bin-hadoop${HADOOP_VER}.tgz https://archive.apache.org/dist/spark/spark-${SPARK_VER}/spark-${SPARK_VER}-bin-hadoop${HADOOP_VER}.tgz && \
