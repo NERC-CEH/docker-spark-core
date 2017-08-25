@@ -41,10 +41,11 @@ RUN echo "deb http://cran.rstudio.com/bin/linux/ubuntu xenial/" | tee -a /etc/ap
     gpg --keyserver keyserver.ubuntu.com --recv-key E084DAB9 && \
     gpg -a --export E084DAB9 | apt-key add - && \
     apt-get -y update && \
-    apt-get -y install r-base r-base-dev && \
-    R -e "install.packages('knitr', repos='http://cran.us.r-project.org')" && \
-    R -e "install.packages('ggplot2', repos='http://cran.us.r-project.org')" && \
-    R -e "install.packages('magrittr', repo='https://cloud.r-project.org/')"
+    apt-get -y install r-base r-base-dev libssl-dev libcurl4-gnutls-dev jags && \
+    R -e "install.packages('devtools', repos='https://cloud.r-project.org/')" && \
+    R -e "install.packages('magrittr', repo='https://cloud.r-project.org/')" && \
+    R -e "install.packages('R2jags', repo='https://cloud.r-project.org/')" && \
+    R -e "devtools::install_github('BiologicalRecordsCentre/sparta@0.1.30')"
 
 # Install Tini
 RUN wget -O /tmp/tini https://github.com/krallin/tini/releases/download/v0.15.0/tini && \
