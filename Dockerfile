@@ -43,9 +43,18 @@ RUN echo "deb http://cran.rstudio.com/bin/linux/ubuntu xenial/" | tee -a /etc/ap
     gpg -a --export E084DAB9 | apt-key add - && \
     apt-get -y update && \
     apt-get -y install r-base r-base-dev libssl-dev libcurl4-gnutls-dev jags libxml2-dev libgdal-dev libproj-dev && \
-    apt-get -y autoclean && \
-    R -q -e "install.packages(c('devtools', 'magrittr', 'R2jags', 'zoon'), repos='https://cloud.r-project.org/')" && \
-    R -q -e "devtools::install_github('BiologicalRecordsCentre/sparta@0.1.30')"
+    apt-get -y autoclean
+# R is used to determine the current installed version. Environment variables
+# R_LIBS_SITE and R_LIBS_USER paths are included in paths searched by R for
+# library packages. Only directories which exist will be included. R uses '%v'
+# as a string expansion to include current version number.
+ENV R_PLATFORM x86_64-centos_6-linux-gnu
+ENV R_LIBS_SITE /opt/R-libs/site/$R_PLATFORM/%v
+ENV R_LIBS_USER /data/R-libs/global/$R_PLATFORM/%v
+ENV R_PACKRAT_CACHE_DIR /data/R-libs/cache/$R_PLATFORM
+RUN R_LIB_SITE_FIXED=$(R --slave -e "write(gsub('%v', R.version\$minor,Sys.getenv('R_LIBS_SITE')), stdout())") && \
+    mkdir -p $R_LIB_SITE_FIXED && \
+    R -q -e "install.packages(c('devtools', 'dplyr', 'knitr', 'magrittr', 'packrat'), repos='https://cloud.r-project.org/')"
 
 # Install Tini
 RUN wget -O /tmp/tini https://github.com/krallin/tini/releases/download/v0.15.0/tini && \
