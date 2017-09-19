@@ -44,17 +44,17 @@ RUN echo "deb http://cran.rstudio.com/bin/linux/ubuntu xenial/" | tee -a /etc/ap
     apt-get -y update && \
     apt-get -y install r-base r-base-dev libssl-dev libcurl4-gnutls-dev jags libxml2-dev libgdal-dev libproj-dev && \
     apt-get -y autoclean
-# R is used to determine the current installed version. Environment variables
-# R_LIBS_SITE and R_LIBS_USER paths are included in paths searched by R for
-# library packages. Only directories which exist will be included. R uses '%v'
-# as a string expansion to include current version number.
-ENV R_PLATFORM x86_64-centos_6-linux-gnu
-ENV R_LIBS_SITE /opt/R-libs/site/$R_PLATFORM/%v
-ENV R_LIBS_USER /data/R-libs/global/$R_PLATFORM/%v
-ENV R_PACKRAT_CACHE_DIR /data/R-libs/cache/$R_PLATFORM
-RUN R_LIB_SITE_FIXED=$(R --slave -e "write(gsub('%v', R.version\$minor,Sys.getenv('R_LIBS_SITE')), stdout())") && \
-    mkdir -p $R_LIB_SITE_FIXED && \
+# Environment variables R_LIBS_SITE and R_LIBS_USER paths are included in
+# paths searched by R for library packages. Only directories which exist will
+# be included.
+ENV R_LIBS_SITE_ROOT /opt/R-libs/site
+ENV R_LIBS_SITE_USER /opt/R-libs/user
+ENV R_LIBS_SITE $R_LIBS_SITE_USER:$R_LIBS_SITE_ROOT
+RUN mkdir -p $R_LIBS_SITE_ROOT && \
     R -q -e "install.packages(c('devtools', 'dplyr', 'knitr', 'magrittr', 'packrat'), repos='https://cloud.r-project.org/')"
+# Fix base library path for Packrat compatibility with CentOS
+RUN mkdir -p /usr/lib64/R && \
+    ln -s /usr/lib/R/library/ /usr/lib64/R/library
 
 # Install Tini
 RUN wget -O /tmp/tini https://github.com/krallin/tini/releases/download/v0.15.0/tini && \
