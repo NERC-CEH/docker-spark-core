@@ -43,9 +43,18 @@ RUN echo "deb http://cran.rstudio.com/bin/linux/ubuntu xenial/" | tee -a /etc/ap
     gpg -a --export E084DAB9 | apt-key add - && \
     apt-get -y update && \
     apt-get -y install r-base r-base-dev libssl-dev libcurl4-gnutls-dev jags libxml2-dev libgdal-dev libproj-dev && \
-    apt-get -y autoclean && \
-    R -q -e "install.packages(c('devtools', 'magrittr', 'R2jags', 'zoon'), repos='https://cloud.r-project.org/')" && \
-    R -q -e "devtools::install_github('BiologicalRecordsCentre/sparta@0.1.30')"
+    apt-get -y autoclean
+# Environment variables R_LIBS_SITE and R_LIBS_USER paths are included in
+# paths searched by R for library packages. Only directories which exist will
+# be included.
+ENV R_LIBS_SITE_ROOT /opt/R-libs/site
+ENV R_LIBS_SITE_USER /opt/R-libs/user
+ENV R_LIBS_SITE $R_LIBS_SITE_USER:$R_LIBS_SITE_ROOT
+RUN mkdir -p $R_LIBS_SITE_ROOT && \
+    R -q -e "install.packages(c('devtools', 'dplyr', 'knitr', 'magrittr', 'packrat'), repos='https://cloud.r-project.org/')"
+# Fix base library path for Packrat compatibility with CentOS
+RUN mkdir -p /usr/lib64/R && \
+    ln -s /usr/lib/R/library/ /usr/lib64/R/library
 
 # Install Tini
 RUN wget -O /tmp/tini https://github.com/krallin/tini/releases/download/v0.15.0/tini && \
